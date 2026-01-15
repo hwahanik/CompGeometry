@@ -1,4 +1,4 @@
-#include "csv_reader.h"
+#include "reader.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -13,7 +13,6 @@ std::vector<Point> read_csv(const std::string& filename) {
     }
 
     std::string line;
-    int index = 0;
     while (std::getline(file, line)) {
         if (line.empty()) continue;
         

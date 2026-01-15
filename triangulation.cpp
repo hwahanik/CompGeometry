@@ -10,8 +10,7 @@ std::shared_ptr<Node> remove_node_from_list(std::shared_ptr<Node> node) {
     
     if (node == nullptr || node->next == node) return nullptr;
 
-    // Access of weak ptr requires lock
-    std::shared_ptr<Node> p = node->prev.lock(); 
+    std::shared_ptr<Node> p = node->prev;
     std::shared_ptr<Node> n = node->next;
 
     p->next = n;
@@ -22,7 +21,7 @@ std::shared_ptr<Node> remove_node_from_list(std::shared_ptr<Node> node) {
     return n;
 }
 
-/// @brief Determine if the triangle formed curr and its neighbors is an ear
+/// @brief Determine if the triangle formed by the points curr and its neighbors (prev and next) forms an ear
 /// @param curr
 /// @return 
 bool is_triangle_ear(std::shared_ptr<Node> curr) {
@@ -32,20 +31,20 @@ bool is_triangle_ear(std::shared_ptr<Node> curr) {
     Point c = curr->point;       
     Point n = curr->next->point; 
 
-    // First check: the vertex must be convex
+    // Check 1: the vertex must be convex
     if (!is_convex(p, c, n)) return false;
 
-    // Second check: all other polygon vertices must fall outside of triangle, 
-    // Equivalently, the segment p - n is contained in the polygon
-
-    std::shared_ptr<Node> iterator = n->next;
+    // Check 2: all other polygon vertices must fall outside of triangle, 
     
+    // (Both check 1 and check 2 imply that the segment (p - n) is contained in the polygon)
+
+    std::shared_ptr<Node> iter = curr->next->next;
     // Loop over all remaining points of the polygon
-    while (iterator != curr->prev) {
-        if (is_point_in_triangle(iterator->point, p, c, n)) {
+    while (iter != curr->prev) {
+        if (is_point_in_triangle(iter->point, p, c, n)) {
             return false;
         }
-        iterator = iterator->next;
+        it = it->next;
     }
 
     return true;
@@ -59,7 +58,7 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points) {
 
     size_t number_points = points.size();
     if (number_points < 3) {
-        std::err << "This is not a Polygon" std::endl;
+        std::cout << "This is not a Polygon!  Check your csv file" << std::endl;
         return {};
     }
 
@@ -67,7 +66,7 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points) {
     std::shared_ptr<Node> head = std::make_shared<Node>(points[0]);
     std::shared_ptr<Node> curr = head;
 
-    for (size_t i = 1; i < number_points; ++i) {
+    for (size_t i = 1; i < number_points - 1; ++i) {
         auto new_node = std::make_shared<Node>(points[i]);
         curr->next = new_node;
         new_node->prev = curr;
@@ -78,26 +77,26 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points) {
     curr->next = head;
     head->prev = curr;
 
-    // Iteration of the Ear Clipping method
+    // Ear Clipping method
     size_t remaining_vertices = number_points;
-    std::shared_ptr<Node> iterator = head;
+    std::shared_ptr<Node> iter = head;
     size_t iterations = 0;
 
     while (remaining_vertices > 3) {
         bool ear_found = false;
         size_t vertices_checked = 0;
 
-        // Ear check and clipping
+        // Ear check and clipping, limit iterations in case cycles in the polygon vertices are present
         while (vertices_checked < remaining_vertices && iterations < 10000) {
-            if (is_ear(iterator)) {
+            if (is_triangle_ear(iter)) {
 
                 // Save this triangle and clip the ear
-                triangles_output.push_back({iterator->prev->point, iterator->point, iterator->next->point});
+                triangles_output.push_back({iter->prev->point, iter->point, iter->next->point});
                 
-                // Clip the vertex from the list using the circular linked list
+                // Clip the vertex from the list using the Circular Linked List
                 // (Observe that this is done in constant time ===> For this reason we use a Circular Linked List!)
                 // (removal of nodes from Linked Lists is O(1)).
-                iterator = remove_node_from_list(iterator);
+                iter = remove_node_from_list(iter);
                 
                 remaining_vertices--;
                 ear_found = true;
@@ -105,12 +104,12 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points) {
             }
 
             // Move to next vertex
-            iterator = iterator->next;
+            iter = iter->next;
             vertices_checked++;
         }
 
         if (!ear_found) {
-            std::cerr << "Error: No ear found in this polygon." << std::endl;
+            std::cout << "Error: No ear found in this polygon." << std::endl;
             break;
         }
 
@@ -119,8 +118,16 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points) {
 
     // Last 3 vertices form one triangle.
     if (remaining_vertices == 3) {
-        triangles.push_back({iterator->prev->point, iterator->point, iterator->next->point});
+        triangles_output.push_back({iter->prev->point, iter->point, iter->next->point});
     }
 
+    // Missing method for freeing all references of shared pointers.
+    cleanup_shared_pointers(iter);
+
     return triangles_output;
+}
+
+void cleanup_shared_pointers(std::shared<Node> node){
+
+
 }

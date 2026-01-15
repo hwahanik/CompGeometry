@@ -3,6 +3,12 @@
 
 #include <vector>
 #include <cmath>
+#include <memory>
+
+// Point in 2D
+struct Point {
+    double x, y;
+};
 
 // Tolerance for the cross product
 const double EPSILON = 1e-9;
@@ -15,17 +21,10 @@ public:
     
     // Shared pointers to the neighbors of this node in the circular linked list
     std::shared_ptr<Node> next;
-
-    // Use weak ptr for prev to avoid memory leaks due to double count of ownership
-    std::weak_ptr<Node> prev;
+    std::shared_ptr<Node> prev;
 
     Node(Point p) : point(p), next(nullptr), prev(nullptr) {}
 };
-
-// Point in 2D
-struct Point {
-    double x, y;
-}
 
 struct Triangle {
     Point p1, p2, p3;

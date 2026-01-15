@@ -3,10 +3,9 @@
 
 #include <vector>
 #include "geometry.h"
-#include "node.h"
 
 // Handles clockwise correction.
 // Core function: Takes a list of points and returns {Area, List of Triangles}.
 std::vector<Triangle> triangulation_algorithm(std::vector<Point>& points);
 
-#end
+#endif

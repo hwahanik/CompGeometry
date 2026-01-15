@@ -8,8 +8,8 @@ double outer_product(Point a, Point b, Point c) {
     return (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
 }
 
+// The condition > EPSILON prevents collinear segments
 bool is_convex(Point prev, Point curr, Point next) {
-    // Require > EPSILON to avoid collinear segments
     return outer_product(prev, curr, next) > EPSILON;
 }
 
@@ -27,14 +27,14 @@ bool is_point_in_triangle(Point p, Point a, Point b, Point c) {
 
 // Unit test for this is missing
 // Classic Shoelace formula for the calculation of signed area using the winding number
-double calculate_signed_area(const std::vector<Point>& points){
-    size_t num_vertices = vertices.size();
+double calculate_signed_area(const std::vector<Point>& polygon){
+    size_t num_vertices = polygon.size();
     double area = 0.0;
 
     for (size_t i = 0; i < num_vertices; ++i) {
-        int j = (i + 1) % n;
-        area += (points[i].x * points[j].y);
-        area -= (points[j].x * points[i].y);
+        int j = (i + 1) % num_vertices;
+        area += (polygon[i].x * polygon[j].y);
+        area -= (polygon[j].x * polygon[i].y);
     }
 
     return area / 2.0;
