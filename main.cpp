@@ -21,30 +21,35 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Successfully read from CSV " << polygon.size() << " vertices.\n";
+    std::cout << "Successfully read from the CSV file " << polygon.size() << " vertices.\n";
 
-    // Step 1: Compute Area from the Shoelace formula, provides orientation as well
+    // Compute Area from the Shoelace formula, provides orientation as well
     // According to the literature 
     double area = calculate_signed_area(polygon);
 
-    // Ear clipping requires counter-clockwise winding (ccw)
-    // If area < 0, collection of points must be reversed
+
+    // Ear clipping requires counter-clockwise winding order (ccw)
+    // If area < 0 reverse polygon
     if (area < 0) {
         std::reverse(polygon.begin(), polygon.end());
+        std::cout << "Polygon has clockwise orientation, reversing direction to counter-clockwise" << std::endl;
+        std::cout << "Signed aread = " << area << std::endl;
         area = -area; 
     }
 
-    // Step 2: Polygon triangulation computation
+    // Polygon triangulation computation
     const std::vector<Triangle> triangles = triangulation_algorithm(polygon);
+
+    if(triangles.size() == 0) return 0;
 
     // Output
     std::cout << "Total area is = " << area << std::endl;
-    std::cout << "List of triangles " << area << std::endl;
+    std::cout << "List of triangles: " << std::endl;
 
     // List of triangles 
     for(size_t i=0; i < triangles.size(); ++i){
         Triangle t = triangles[i];
-        std::cout << "(" << t.p1.x << " , " << t.p1.y << ")" << "  ,  " << "(" << t.p2.x << " , " << t.p2.y << ")" << "  ,  " << "(" << t.p3.x << " , " << t.p3.y << ")" << std::endl;
+        std::cout << "(" << t.a.x << " , " << t.a.y << ")" << "  ,  " << "(" << t.b.x << " , " << t.b.y << ")" << "  ,  " << "(" << t.c.x << " , " << t.c.y << ")" << std::endl;
     }
 
     return 0;

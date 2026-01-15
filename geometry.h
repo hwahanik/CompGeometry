@@ -11,7 +11,7 @@ struct Point {
 };
 
 // Tolerance for the cross product
-const double EPSILON = 1e-9;
+const double EPSILON = 1e-12;
 
 // Node in the circular doubly linked list.
 // Represents a vertex
@@ -24,10 +24,6 @@ public:
     std::shared_ptr<Node> prev;
 
     Node(Point p) : point(p), next(nullptr), prev(nullptr) {}
-};
-
-struct Triangle {
-    Point p1, p2, p3;
 };
 
 // Auxiliary functions
@@ -46,12 +42,31 @@ double outer_product(Point a, Point b, Point c);
 // assuming orientation of polygon is counter clockwise.
 bool is_convex(Point prev, Point curr, Point next);
 
-// Checks if Point p lies inside or on the Boundary of the Triangle(a, b, c).
-bool is_point_in_triangle(Point p, Point a, Point b, Point c);
-
 // Calculates the signed area of the polygon 
 // A > 0 implies winding is counter clockwise 
 // A < 0 implies winding is clockwise => list of vertices needs to be reversed for computing the ear clipping method
 double calculate_signed_area(const std::vector<Point>& vertices);
+
+class Triangle {
+public:
+
+    // Triangle vertices
+    Point a, b, c;
+
+    // Constructor
+    Triangle(Point a, Point b, Point c) : a(a), b(b), c(c) {} 
+    
+    // Checks if Point p lies inside or on the Boundary of the Triangle(a, b, c).
+    bool is_point_in_triangle(Point p) {
+        // Check orientation of P relative to three edges (ab, bc, ca).
+        // If P is to the left (or on the line) of all edges, it is inside.
+        // Use a tolerance to allow the point to be on the edge.
+        bool b1 = outer_product(a, b, p) >= -EPSILON;
+        bool b2 = outer_product(b, c, p) >= -EPSILON;
+        bool b3 = outer_product(c, a, p) >= -EPSILON;
+
+        return b1 && b2 && b3;
+    }
+};
 
 #endif

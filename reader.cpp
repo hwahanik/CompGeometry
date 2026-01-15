@@ -34,15 +34,3 @@ std::vector<Point> read_csv(const std::string& filename) {
     }
     return points;
 }
-
-// Building 
-void generate_test_csv(const std::string& filename) {
-    std::ofstream file(filename);
-    // Simple concave shape
-    file << "0,0\n";
-    file << "4,0\n";
-    file << "4,4\n";
-    file << "2,2\n"; 
-    file << "0,4\n";
-    file.close();
-}
