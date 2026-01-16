@@ -20,17 +20,18 @@ std::vector<Point> read_csv(const std::string& filename) {
         std::string segment;
         double x = 0, y = 0;
 
-        // Parse X (delimited by comma)
+        // Parse X (delimited by comma in the csv file)
         if (std::getline(ss, segment, ',')) {
             try { x = std::stod(segment); } catch (...) { continue; }
         }
         
-        // Parse Y (remainder of line)
+        // Parse Y (remainder of the line in the csv file)
         if (std::getline(ss, segment)) {
              try { y = std::stod(segment); } catch (...) { continue; }
         }
 
         points.push_back({x, y});
     }
+
     return points;
 }

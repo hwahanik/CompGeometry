@@ -1,23 +1,18 @@
 #include "geometry.h"
 
-bool is_zero(double val) {
-    return std::abs(val) < EPSILON;
-}
-
 double outer_product(Point a, Point b, Point c) {
     return (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
 }
 
-// The condition > EPSILON prevents collinear segments
-bool is_convex(Point prev, Point curr, Point next) {
+bool is_convex_and_not_collinear(Point prev, Point curr, Point next) {
     return outer_product(prev, curr, next) > EPSILON;
 }
 
-// Classic Shoelace formula for the calculation of signed area using the winding order
 double calculate_signed_area(const std::vector<Point>& polygon){
     size_t num_vertices = polygon.size();
     double area = 0.0;
 
+    // The Shoelace loop
     for (size_t i = 0; i < num_vertices; ++i) {
         int j = (i + 1) % num_vertices;
         area += (polygon[i].x * polygon[j].y);
