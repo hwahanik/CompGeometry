@@ -13,6 +13,8 @@
 
 3.  Run as ./cgeom_algorithm concave_poly.csv
 
+4.  Run as ./cgeom_algorithm simple_concave_poly.csv
+
 4.  Please find included here the simple cases of 
 
     "simple_concave_poly_ccw.csv" ==>  Answer equivalent to simple_concave, but NO warning will be printed as this Polygon already has clock-wise orientation.

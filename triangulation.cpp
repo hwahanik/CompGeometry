@@ -129,7 +129,7 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& polygon) {
 
         // This can only happen it the polygon is not simple, i.e. has self-intersections or holes.
         if (!ear_found) {
-            std::cout << "Error: No ear found for a residual polygon.  Polygon may be non-simple." << std::endl;
+            std::cout << "Error: No ear found for a residual polygon. Polygon may be non-simple, have self-intersections or holes." << std::endl;
             std::cout << "Remaining vertices in residual polygon = " << remaining_vertices << std::endl;
             break;
         }
@@ -140,7 +140,6 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& polygon) {
     // If last 3 vertices remain, if collinear will not form a triangle.
     if (remaining_vertices == 3){
         auto c = std::abs(outer_product(iter->prev->point, iter->point, iter->next->point));
-
         // If c < EPSILON the three points lie on a line.
         if(c > EPSILON){
             triangles_output.push_back(Triangle(iter->prev->point, iter->point, iter->next->point));
