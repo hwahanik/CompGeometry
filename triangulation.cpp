@@ -73,7 +73,7 @@ std::vector<Triangle> triangulation_algorithm(std::vector<Point>& polygon) {
 
     size_t number_points = polygon.size();
     if (number_points < 3) {
-        std::cout << "This is not a Polygon!  Check the csv file" << std::endl;
+        std::cout << "This is not a Polygon! Please check the csv file." << std::endl;
         return {};
     }
 
